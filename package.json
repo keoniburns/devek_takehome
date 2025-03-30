@@ -8,19 +8,20 @@
   "scripts": {
     "dev": "bun --hot src/backend/index.tsx",
     "dev:backend": "bun --hot src/backend/index.tsx",
-    "dev:frontend": "bun --hot src/frontend/server.ts",
+    "dev:frontend": "bun --hot src/frontend/dev-server.ts",
     "build": "bun build ./src/frontend/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
     "start": "NODE_ENV=production bun src/backend/index.tsx",
-    "build:frontend": "bun build ./src/frontend/server.ts --outdir=public --target=browser"
+    "build:frontend": "bun build ./src/frontend/dev-server.ts --outdir=public --target=browser"
   },
   "dependencies": {
-    "mongodb": "^6.15.0",
+    "jsonwebtoken": "^9.0.2",
     "react": "^19",
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/bun": "latest"
+    "@types/react-dom": "^19"
   }
 }

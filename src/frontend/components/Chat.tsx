@@ -1,29 +1,23 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { wsClient } from '../../backend/services/websocket.client';
+import { wsService } from '../../backend/chat';
+import { Message } from '@/shared/types';
+import { useAuth } from '../AuthContext';
+import { wsClient } from '../socket';
 
-// Message interface to match our MongoDB model
-interface Message {
-  id?: number;
-  _id?: string;
-  userId?: string;
-  username: string;
-  text: string;
-  timestamp: string;
-}
+
 
 export function Chat() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Set up WebSocket event handlers
   useEffect(() => {
-    if (isLoggedIn) {
-      // Connect to WebSocket when logged in
-      wsClient.connect(username);
+    if (user?.username) {
+      // Connect to WebSocket with authentication
+      wsClient.connect(user.username);
       
       // Handle messages from the server
       const messageUnsubscribe = wsClient.onMessage((data) => {
@@ -36,7 +30,7 @@ export function Chat() {
       
       // Handle connection state changes
       const connectionUnsubscribe = wsClient.onConnectionChange((connected) => {
-        setIsConnected(connected);
+        setIsConnected(connected);  
       });
       
       // Clean up on unmount
@@ -46,43 +40,20 @@ export function Chat() {
         wsClient.disconnect();
       };
     }
-  }, [isLoggedIn, username]);
+  }, [user?.username]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username.trim()) {
-      setIsLoggedIn(true);
-    }
-  };
-
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && isConnected) {
-      wsClient.sendMessage(message);
+    if (message.trim() && isConnected && user?.username) {
+      wsClient.sendMessage(message, user.username);
       setMessage('');
     }
   };
-
-  if (!isLoggedIn) {
-    return (
-      <div className="login-container">
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button type="submit">Join Chat</button>
-        </form>
-      </div>
-    );
-  }
 
   return (
     <div className="chat-container">
@@ -94,7 +65,7 @@ export function Chat() {
       </div>
       <div className="messages">
         {messages.map((msg) => (
-          <div key={msg.id || msg._id} className={`message ${msg.username === username ? 'own-message' : ''}`}>
+          <div key={msg.id} className={`message ${msg.username === user?.username ? 'own-message' : ''}`}>
             <span className="username">{msg.username}</span>
             <span className="text">{msg.text}</span>
             <span className="timestamp">

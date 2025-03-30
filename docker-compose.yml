@@ -1,18 +1,4 @@
 services:
-  # MongoDB service
-  mongodb:
-    image: mongo:latest
-    container_name: chat-mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
-    networks:
-      - chat-network
-
   # Backend service
   backend:
     build:
@@ -22,15 +8,11 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - MONGO_URL=mongodb://admin:password@mongodb:27017
       - NODE_ENV=development
-    depends_on:
-      - mongodb
-    networks:
-      - chat-network
     volumes:
       - .:/app
       - /app/node_modules
+      - chat_data:/app/data
 
   # Frontend service  
   frontend:
@@ -42,15 +24,13 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    networks:
-      - chat-network
     volumes:
       - .:/app
       - /app/node_modules
 
 volumes:
-  mongodb_data:
+  chat_data:
 
 networks:
-  chat-network:
+  default:
     driver: bridge

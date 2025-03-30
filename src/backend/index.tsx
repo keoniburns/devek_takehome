@@ -1,28 +1,49 @@
-import { serve, ServerWebSocket} from "bun";
+import { serve, ServerWebSocket } from "bun";
 import index from "../frontend/index.html";
-import { dbService } from "./services/db.service";
-import { wsService } from "./services/websocket.service";
-import { handleNewMessage, handleJoin } from "./controllers/chat";
+import { wsService, handleNewMessage, handleJoin } from "./chat";
+import { handleAuth } from "./auth";
+import { join } from 'path';
 
-// Initialize database and start server
+// Use absolute path based on script location
+const DATA_DIR = join(import.meta.dir, 'data');
+const MESSAGES_FILE = join(DATA_DIR, 'messages.json');
+const USERS_FILE = join(DATA_DIR, 'users.json');
+// Initialize server
 async function bootstrap() {
   try {
-    console.log("Connecting to MongoDB...");
-    await dbService.connect();
-    console.log("MongoDB connected successfully");
+    console.log("Starting chat server...");
     
-    // Create server after successful DB connection
+    // Create data directory if it doesn't exist
+    try {
+
+      await Bun.write(MESSAGES_FILE, JSON.stringify([]));
+      await Bun.write(USERS_FILE, JSON.stringify([]));
+    } catch (error) {
+      // Directory might already exist, ignore error
+    }
+    
+    // Create server
     const server = serve({
       port: 4000,
       fetch(req, server) {
+        // Handle HTTP requests
+        const url = new URL(req.url);
+        
+        // Authentication routes
+        if ((url.pathname === "/api/auth" || url.pathname === "/api/auth/login") && req.method === "POST") {
+          return handleAuth(req);
+        }
+        
+        // WebSocket upgrade
         if (server.upgrade(req)) {
           return;
         }
+        
         return new Response(index);
       },
-        
+      
       websocket: {
-        async open(ws: ServerWebSocket<undefined>) {
+        async open(ws: ServerWebSocket<{username: string}>) {
           wsService.addClient(ws);
           await wsService.sendHistory(ws);
         },
