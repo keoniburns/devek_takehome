@@ -1,0 +1,18 @@
+FROM oven/bun:1.2.7
+   
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock* ./
+
+# Install dependencies
+RUN bun install
+
+# Copy application code
+COPY . .
+
+# Expose the frontend port
+EXPOSE 3000
+
+# Build first, then serve the built files
+CMD ["bun", "run", "dev:frontend"]

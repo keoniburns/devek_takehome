@@ -1,0 +1,18 @@
+FROM oven/bun:1.2.7
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock* ./
+
+# Install dependencies
+RUN bun install
+
+# Copy application code
+COPY . .
+
+# Expose the backend port
+EXPOSE 4000
+
+# Start the backend server
+CMD ["bun", "run", "dev:backend"] 
