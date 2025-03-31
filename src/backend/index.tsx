@@ -11,7 +11,7 @@ const DATA_DIR = path.join(import.meta.dir, "data");
 const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 
-let indexHtml: String;
+let indexHtml: string;
 try {
   const indexPath =
     process.env.NODE_ENV === "production"
