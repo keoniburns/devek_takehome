@@ -52,9 +52,46 @@ This project includes Docker configuration for easy deployment:
    - Frontend: http://localhost:3000
    - Backend: http://localhost:4000
 
+### Production Build
+
+```bash
+# Clean previous builds
+bun run clean
+
+# Build just the frontend
+bun run build:frontend
+
+# Build just the backend
+bun run build:backend
+
+# Build both frontend and backend (includes cleaning)
+bun run build
+```
+
+### Running in Production
+
+```bash
+# Run the frontend development server in production mode
+bun run start:frontend
+
+# Run the compiled backend
+bun run start:backend
+
+# Run both frontend and backend servers
+bun run start
+```
+
+The build process:
+
+1. Cleans previous build directories
+2. Compiles the frontend into optimized static files
+3. Compiles the backend with external dependencies
+4. Copies frontend assets to the backend distribution folder
+
 ## Project Structure
 
 ```
+
 bun-react-template/
 ├── src/
 │ ├── frontend/ # React frontend application
@@ -84,6 +121,7 @@ bun-react-template/
 ├── Dockerfile.frontend # Frontend Docker configuration
 ├── docker-compose.yml # Docker Compose configuration
 └── package.json # Project dependencies and scripts
+
 ```
 
 ## Architecture
@@ -119,3 +157,7 @@ For production deployment, consider the following improvements:
 8. **HTTPS**: Enable HTTPS for secure communications.
 9. **Error Handling**: Improve error handling and implement proper error reporting.
 10. **Performance Optimization**: Optimize bundle size, implement code splitting, and lazy loading.
+
+```
+
+```

@@ -9,9 +9,13 @@
     "dev": "concurrently \"bun --hot src/backend/index.tsx\" \"bun --hot src/frontend/dev-server.ts\"",
     "dev:backend": "bun --hot src/backend/index.tsx",
     "dev:frontend": "bun --hot src/frontend/dev-server.ts",
-    "build": "bun build ./src/frontend/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
-    "start": "NODE_ENV=production bun src/backend/index.tsx",
-    "build:frontend": "bun build ./src/frontend/dev-server.ts --outdir=public --target=browser"
+    "clean": "rm -rf dist dist-backend",
+    "build:frontend": "bun build ./src/frontend/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
+    "build:backend": "bun build ./src/backend/index.tsx --outdir=dist-backend --target=bun --external 'bcrypt' --external 'jsonwebtoken' --external 'fs/*' --external 'path' && cp -r dist/* dist-backend/",
+    "build": "bun run clean && bun run build:frontend && bun run build:backend",
+    "start:frontend": "bun --hot src/frontend/dev-server.ts --port 3000 --prod",
+    "start:backend": "NODE_ENV=production bun dist-backend/index.js",
+    "start": "concurrently \"bun run start:backend\" \"bun run start:frontend\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

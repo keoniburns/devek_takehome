@@ -1,15 +1,28 @@
 import { serve, ServerWebSocket } from "bun";
-import index from "../frontend/index.html";
+import fs from "fs";
+import path from "path";
 import { wsService, handleNewMessage, handleJoin, handleTyping } from "./chat";
 import { handleAuth } from "./auth";
-import { join } from "path";
 import { handleCors, addCorsHeaders } from "./cors";
 import { mkdir, writeFile, exists } from "fs/promises";
 
 // Use absolute path based on script location
-const DATA_DIR = join(import.meta.dir, "data");
-const MESSAGES_FILE = join(DATA_DIR, "messages.json");
-const USERS_FILE = join(DATA_DIR, "users.json");
+const DATA_DIR = path.join(import.meta.dir, "data");
+const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
+const USERS_FILE = path.join(DATA_DIR, "users.json");
+
+let indexHtml: String;
+try {
+  const indexPath =
+    process.env.NODE_ENV === "production"
+      ? path.join(process.cwd(), "dist-backend", "index.html")
+      : path.join(process.cwd(), "src", "frontend", "index.html");
+
+  indexHtml = fs.readFileSync(indexPath, "utf-8");
+} catch (error) {
+  console.error("Failed to load index.html:", error);
+  indexHtml = "<html><body>Error loading application</body></html>";
+}
 
 // Initialize server
 async function bootstrap() {
@@ -59,7 +72,7 @@ async function bootstrap() {
         }
 
         // Add CORS headers to all other responses
-        const response = new Response(index);
+        const response = new Response(indexHtml);
 
         // Use the centralized addCorsHeaders function
         return addCorsHeaders(response);
