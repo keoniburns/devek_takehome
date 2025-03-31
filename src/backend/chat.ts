@@ -1,8 +1,8 @@
 import { writeFile, readFile } from 'fs/promises';
 import { ServerWebSocket } from "bun";
 import { Message } from '../shared/types';
-
-const MESSAGES_FILE = './data/messages.json';
+import { join } from 'path';
+const MESSAGES_FILE = join(import.meta.dir, 'data', 'messages.json');
 const clients: ServerWebSocket<{username: string}>[] = [];
 
 // Message storage
@@ -20,7 +20,7 @@ export const messageService = {
   async saveMessage(message: Message) {
     const messages = await this.getMessages();
     messages.push(message);
-    await writeFile(MESSAGES_FILE, JSON.stringify(messages), 'utf8');
+    await writeFile(MESSAGES_FILE, JSON.stringify(messages, null, 2), 'utf8');
     return message;
   }
 };
@@ -49,7 +49,7 @@ export const wsService = {
   },
   
   broadcast(data: any) {
-    const message = JSON.stringify(data);
+    const message = JSON.stringify(data, null, 2);
     for (const client of clients) {
       client.send(message);
     }
@@ -69,7 +69,7 @@ export async function handleNewMessage(messageData: any) {
     
     // Create message object with all required fields
     const message = {
-      id: Date.now(), // Use timestamp as unique ID
+      uuid: Date.now(), // Use timestamp as unique ID
       username, // Sender's username
       senderId, // Add sender's ID
       text, // Message content

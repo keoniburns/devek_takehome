@@ -7,14 +7,17 @@
 
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
-import { App } from "./App";
+import App from "./App";
+import { AuthProvider } from "./context/AuthContext";
 
 // Only run the client-side code if we're in a browser environment
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const elem = document.getElementById("root")!;
   const app = (
     <StrictMode>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </StrictMode>
   );
 

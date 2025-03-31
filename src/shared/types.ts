@@ -2,21 +2,17 @@
 
 
 export interface User {
-    id?: number;
-    _id?: string; //
-    username: string;
-    joinedAt?: string;
-  }
-  
-  export interface UserLogin {
-    username: string;
+    id?: number; // unique identifier 
+    username: string; // username of the user 
+    password: string; // password of the user 
+    joinedAt?: string; // date and time of when the user joined the chat 
   }
   
   // Message.ts
   export interface Message {
-    id: number;
-    username: string;
-    senderId: number;
-    text: string;
-    timestamp: string;
+    uuid: number; // needs to be a uuid 
+    username: string; // username of the user 
+    senderId: number; // id of the user who sent the message 
+    text: string; // text of the message 
+    timestamp: string; // date and time of when the message was sent 
   }

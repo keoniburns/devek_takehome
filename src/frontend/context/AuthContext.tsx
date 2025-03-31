@@ -1,9 +1,9 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { User } from '../shared/types';
+import { User } from '../../shared/types';
 
 interface AuthContextType {
   user: User | null;
-  setUsername: (username: string) => void;
+  setAuthUser: (userData: User) => void;
   isLoggedIn: boolean;
 }
 
@@ -12,16 +12,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   
-  const setUsername = (username: string) => {
-    // This would normally set the full user object
-    // but we're keeping the API compatible
-    setUser({ username });
+  
+  const setAuthUser = (userData: User) => {
+    // No need to fetch again - we already have the user data
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
   };
   
   return (
     <AuthContext.Provider value={{
       user,
-      setUsername,
+      setAuthUser,
       isLoggedIn: !!user
     }}>
       {children}

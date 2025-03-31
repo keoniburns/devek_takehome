@@ -1,34 +1,18 @@
 import "./styles/index.css";
-import { useState } from "react";
-import { Chat } from "./components/Chat";
-import { Auth } from "./components/Auth";
-import { AuthProvider, useAuth } from "./AuthContext";
+import { Auth } from "./pages/Auth";
+import { Chat } from "./pages/Chat";
+import { useAuth } from "./context/AuthContext";
+import { Box, ThemeProvider } from "@mui/material";
+import { darkTheme, commonStyles } from "./styles/theme";
 
-function AppContent() {
-  const { isLoggedIn, username } = useAuth();
+export default function App() {
+  const { user, isLoggedIn } = useAuth();
 
   return (
-    <div className="app">
-      <header>
-        <h1>Real-time Chat</h1>
-        {isLoggedIn && (
-          <div className="user-info">
-            <span>Welcome, {username}</span>
-          </div>
-        )}
-      </header>
-      
-      {isLoggedIn ? <Chat /> : <Auth />}
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <Box sx={commonStyles.fullContainer}>
+        {isLoggedIn ? <Chat /> : <Auth />}
+      </Box>
+    </ThemeProvider>
   );
 }
-
-export function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
-}
-
-export default App;

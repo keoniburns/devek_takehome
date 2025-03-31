@@ -38,14 +38,14 @@ export const wsClient = {
     }
   },
   
-  sendMessage(text: string, username: string) {
+  sendMessage(text: string, username: string, senderId: number) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({
         type: 'message',
         message: {
           username,
           text,
-          senderId: username
+          senderId
         }
       }));
     }
