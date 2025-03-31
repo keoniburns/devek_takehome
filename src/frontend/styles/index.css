@@ -251,3 +251,15 @@ button {
 button:hover {
   background: #f3d5a3;
 }
+.typing-dots {
+  display: inline-block;
+  width: 20px;
+  text-align: left;
+  animation: typing 1.4s infinite;
+}
+@keyframes typing {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+  100% { content: '.'; }
+}

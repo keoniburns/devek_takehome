@@ -6,7 +6,7 @@
   "main": "src/backend/index.tsx",
   "module": "src/backend/index.tsx",
   "scripts": {
-    "dev": "bun --hot src/backend/index.tsx",
+    "dev": "concurrently \"bun --hot src/backend/index.tsx\" \"bun --hot src/frontend/dev-server.ts\"",
     "dev:backend": "bun --hot src/backend/index.tsx",
     "dev:frontend": "bun --hot src/frontend/dev-server.ts",
     "build": "bun build ./src/frontend/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
@@ -19,6 +19,7 @@
     "@mui/icons-material": "^7.0.1",
     "@mui/material": "^7.0.1",
     "bcrypt": "^5.1.1",
+    "concurrently": "^9.1.2",
     "jsonwebtoken": "^9.0.2",
     "react": "^19",
     "react-dom": "^19"

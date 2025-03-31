@@ -4,6 +4,7 @@ import { Message } from '../shared/types';
 import { join } from 'path';
 const MESSAGES_FILE = join(import.meta.dir, 'data', 'messages.json');
 const clients: ServerWebSocket<{username: string}>[] = [];
+const typingUsers: Record<string, boolean> = {}; // Track users who are typing
 
 // Message storage
 export const messageService = {
@@ -53,6 +54,18 @@ export const wsService = {
     for (const client of clients) {
       client.send(message);
     }
+  },
+  
+  // New method to handle typing status
+  setTypingStatus(username: string, isTyping: boolean) {
+    // Update typing status
+    typingUsers[username] = isTyping;
+    
+    // Broadcast typing status to all clients
+    this.broadcast({
+      type: 'typing',
+      typingUsers: Object.keys(typingUsers).filter(user => typingUsers[user])
+    });
   }
 };
 
@@ -96,8 +109,9 @@ export async function handleJoin(ws: ServerWebSocket<{username: string}>, data: 
   try {
     ws.data = { username: data.username };
     
+    // Send a system message about the new user
     wsService.broadcast({
-      type: 'system',
+      type: 'notification',
       message: `${data.username} has joined the chat`
     });
     
@@ -106,4 +120,13 @@ export async function handleJoin(ws: ServerWebSocket<{username: string}>, data: 
     console.error('Error handling join:', error);
     throw error;
   }
+}
+
+export async function handleTyping(data: any) {
+  const { username, isTyping } = data;
+  if (username) {
+    wsService.setTypingStatus(username, isTyping);
+    return { success: true };
+  }
+  return { success: false };
 }

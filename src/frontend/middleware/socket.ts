@@ -63,5 +63,15 @@ export const wsClient = {
     return () => {
       this.connectionHandlers = this.connectionHandlers.filter(h => h !== handler);
     };
+  },
+  
+  sendTypingStatus(username: string, isTyping: boolean) {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({
+        type: 'typing',
+        username,
+        isTyping
+      }));
+    }
   }
 };
