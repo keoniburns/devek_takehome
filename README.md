@@ -119,7 +119,3 @@ For production deployment, consider the following improvements:
 8. **HTTPS**: Enable HTTPS for secure communications.
 9. **Error Handling**: Improve error handling and implement proper error reporting.
 10. **Performance Optimization**: Optimize bundle size, implement code splitting, and lazy loading.
-
-## License
-
-[Add your license information here]
