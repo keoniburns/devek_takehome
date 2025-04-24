@@ -16,7 +16,7 @@ A full-stack chat application built with Bun, React, and TypeScript. This projec
 
    ```bash
    git clone <repository-url>
-   cd bun-react-template
+   cd devek_takehome
    ```
 
 2. Install dependencies
